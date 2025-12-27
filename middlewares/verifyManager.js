@@ -4,8 +4,8 @@ const verifyManager = (req,res,next) => {
     if (!req.user || !req.user.role) {
       return res.status(401).json({ message: "User not authenticated" });
     }
-    //check the role is amager or employee
-    if (req.user.role.toLowerCase !== "manager") {
+    //check the role is manager or employee
+    if (!req.user.role.toLowerCase == "manager") {
       return res
         .status(403)
         .json({ message: "Access denied.Only manger can perform this action" });
