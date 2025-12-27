@@ -10,5 +10,8 @@ const route=new express.Router();
 //route to sign up
 route.post('/signup',userController.signupController);
 
+//route to login 
+route.post('/login',userController.loginController);
+
 //export route
 module.exports=route;
