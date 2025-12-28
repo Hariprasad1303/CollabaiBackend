@@ -52,3 +52,7 @@ exports.getProjectController=async(req,res)=>{
 
 }
 
+exports.projectcountController=async(req,res)=>{
+  
+}
+

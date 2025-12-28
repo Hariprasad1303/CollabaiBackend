@@ -22,11 +22,17 @@ route.post('/signup',userController.signupController);
 //route to login 
 route.post('/login',userController.loginController);
 
+//route to update profile
+route.put('/manager/profile',verifyToken,userController.updateController);
+
 //route to  project create
 route.post('/manager/projects',verifyToken,verifyManager,projectController.projectCreateController);
 
 //route to  get project 
 route.get('/manager/projects',verifyToken,projectController.getProjectController);
+
+//route to get project count
+route.get('/manager/projects/count',verifyToken,projectController.projectcountController)
 
 //export route
 module.exports=route;

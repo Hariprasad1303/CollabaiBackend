@@ -30,20 +30,44 @@ exports.signupController = async (req, res) => {
 
 exports.loginController = async (req, res) => {
   //logic
-  const { email, password} = req.body;
+  const { email, password } = req.body;
   console.log(email, password);
   try {
     const existingUser = await users.findOne({ email: email });
     if (existingUser) {
       if (existingUser.password === password) {
-        const token = jwt.sign({ id:existingUser._id,email: existingUser.email,role:existingUser.role },process.env.secretKey);
-        res.status(200).json({existingUser,token});
+        const token = jwt.sign(
+          {
+            id: existingUser._id,
+            email: existingUser.email,
+            role: existingUser.role,
+          },
+          process.env.secretKey
+        );
+        res.status(200).json({ existingUser, token });
       } else {
         res.status(400).json("password does not match");
       }
     } else {
       res.status(400).json("User not found");
     }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+exports.updateController = async (req, res) => {
+  //logic
+  try {
+    const { username, email } = req.body;
+    console.log(username, email);
+    const updatedUser = await users.findByIdAndUpdate(
+      req.user.id,
+      { username, email },
+      { new: true }
+    );
+    console.log(updatedUser);
+    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json(err);
   }
