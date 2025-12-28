@@ -25,5 +25,8 @@ route.post('/login',userController.loginController);
 //route to  project create
 route.post('/manager/projects',verifyToken,verifyManager,projectController.projectCreateController);
 
+//route to  get project 
+route.get('/manager/projects',verifyToken,projectController.getProjectController);
+
 //export route
 module.exports=route;

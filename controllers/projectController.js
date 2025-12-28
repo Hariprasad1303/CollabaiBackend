@@ -9,13 +9,13 @@ exports.projectCreateController = async(req, res) => {
 
     //only manager is allowed to create projects
     if(req.user.role!=="manager"){
-      res.status(403).json({message:"Only manager can create projects"});
+      return res.status(403).json({message:"Only manager can create projects"});
     }
 
     const {name,description,priority,date}=req.body;
     //cheack all fields are filled
     if(!name ||!description ||!priority||!date){
-      res.status(400).json({message:"Please fill all forms"});
+     return  res.status(400).json({message:"Please fill all forms"});
     }
 
     //create new project  
@@ -24,13 +24,31 @@ exports.projectCreateController = async(req, res) => {
       description:description.trim(),
       priority:priority||"Medium",
       date,
-      createdBy:req.user.id
+      createdBy:req.user.id,
     })
     await  newProject.save();
     res.status(200).json(newProject);
 
   }catch(err){
-    json.status(500).json(err);
+    res.status(500).json(err);
   }
   
 };
+
+exports.getProjectController=async(req,res)=>{
+  try{
+    console.log("Fetching Projects for:",req.user);
+     //ensurring that only mnager  
+    if(req.user.role !=="manager"){
+      return res.status(403).json({message:"only managers can create their project"})
+    }
+    //fetch the projects created by this manager
+    const project=await projects.find({createdBy:req.user.id}).sort({createdBy:-1});
+    res.status(200).json(project)
+
+  }catch(err){
+    res.status(500).json(err)
+  }
+
+}
+
