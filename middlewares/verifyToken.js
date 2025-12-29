@@ -28,6 +28,7 @@ const verifyToken = (req, res, next) => {
     //attach the user with request
     req.user = {
       id: jwtResponse.id,
+      username:jwtResponse.username,
       email: jwtResponse.email,
       role: jwtResponse.role,
     };

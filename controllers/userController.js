@@ -39,6 +39,7 @@ exports.loginController = async (req, res) => {
         const token = jwt.sign(
           {
             id: existingUser._id,
+            username:existingUser.username,
             email: existingUser.email,
             role: existingUser.role,
           },
@@ -56,6 +57,16 @@ exports.loginController = async (req, res) => {
   }
 };
 
+
+//get user details
+exports.getUserDetailsController=async(req,res)=>{
+  try{
+    const {username,email,role}=req.user;
+    res.status(200).json({username,email,role})
+  }catch(err){
+    res.status(500).json(err);
+  }
+}
 exports.updateController = async (req, res) => {
   //logic
   try {

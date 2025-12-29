@@ -1,6 +1,8 @@
 //import project model
 const projects = require("../models/projectModel");
 
+
+
 exports.projectCreateController = async(req, res) => {
   //logic
   try{
@@ -52,7 +54,20 @@ exports.getProjectController=async(req,res)=>{
 
 }
 
-exports.projectcountController=async(req,res)=>{
-  
+exports.projectCountController=async(req,res)=>{
+  try{
+    let count;
+    if(req.user.role=="manager"){
+      count=await projects.countDocuments({createdBy:req.user.id});
+      res.status(200).json({count});
+    }else if(req.user.role=="admin"){
+      count=await projects.countDocuments();
+      res.status(200).json({count});
+    }else{
+      res.status(403).json({message:"access denied"});
+    }   
+  }catch(err){
+    res.status(500).json(err);
+  }
 }
 

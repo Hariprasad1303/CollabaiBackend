@@ -22,6 +22,9 @@ route.post('/signup',userController.signupController);
 //route to login 
 route.post('/login',userController.loginController);
 
+//route to get user details
+route.get('/manager/userdetails',verifyToken,userController.getUserDetailsController)
+
 //route to update profile
 route.put('/manager/profile',verifyToken,userController.updateController);
 
@@ -32,7 +35,7 @@ route.post('/manager/projects',verifyToken,verifyManager,projectController.proje
 route.get('/manager/projects',verifyToken,projectController.getProjectController);
 
 //route to get project count
-route.get('/manager/projects/count',verifyToken,projectController.projectcountController)
+route.get('/manager/projects/count',verifyToken,projectController.projectCountController)
 
 //export route
 module.exports=route;
