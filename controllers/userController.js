@@ -4,6 +4,7 @@ const users = require("../models/userModel");
 //import jwt
 const jwt = require("jsonwebtoken");
 
+//sign up controller both manager and employee
 exports.signupController = async (req, res) => {
   //logic
   const { username, email, password, role } = req.body;
@@ -28,6 +29,7 @@ exports.signupController = async (req, res) => {
   }
 };
 
+//login controller-both manager and employee
 exports.loginController = async (req, res) => {
   //logic
   const { email, password } = req.body;

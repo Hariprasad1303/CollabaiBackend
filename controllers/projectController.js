@@ -128,7 +128,7 @@ exports.projectInviteController = async (req, res) => {
     })
 
     //notification
-    const notification=await notifications({
+    const notification=await notifications.create({
       userId:user._id,
       projectId:project._id,
       message:`you are invited  to ${project.name}`

@@ -7,6 +7,9 @@ const userController=require('./controllers/userController')
 //import project controller
 const projectController=require('./controllers/projectController')
 
+//import project controller
+const notificationController=require('./controllers/notificationController')
+
 //import verifyToken middleware
 const verifyToken=require('./middlewares/verifyToken')
 
@@ -22,11 +25,11 @@ route.post('/signup',userController.signupController);
 //route to login 
 route.post('/login',userController.loginController);
 
-//route to get user details
-route.get('/manager/userdetails',verifyToken,userController.getUserDetailsController)
+//route to get user details -both employes and manager
+route.get('/userdetails',verifyToken,userController.getUserDetailsController)
 
 //route to update profile
-route.put('/manager/profile',verifyToken,userController.updateController);
+route.put('/profile',verifyToken,userController.updateController);
 
 //route to  project create
 route.post('/manager/projects',verifyToken,verifyManager,projectController.projectCreateController);
@@ -39,6 +42,9 @@ route.get('/manager/projects/count',verifyToken,projectController.projectCountCo
 
 //route to project invite
 route.post('/manager/invite',verifyToken,verifyManager,projectController.projectInviteController)
+
+//route to notifications(bothe employer and manager can seee the notifications )
+route.get('/notifications',verifyToken,notificationController.getNotificationController);
 
 //export route
 module.exports=route;
