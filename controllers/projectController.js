@@ -1,73 +1,140 @@
-//import project model
+//import models
 const projects = require("../models/projectModel");
+const users = require("../models/userModel");
+const projectMember = require("../models/projectMemberModel");
+const notifications = require("../models/notificationModel");
+const projectMembers = require("../models/projectMemberModel");
 
-
-
-exports.projectCreateController = async(req, res) => {
+exports.projectCreateController = async (req, res) => {
   //logic
-  try{
-    console.log("inside project create controller")
-    console.log("Logged in user",req.user);
+  try {
+    console.log("inside project create controller");
+    console.log("Logged in user", req.user);
 
     //only manager is allowed to create projects
-    if(req.user.role!=="manager"){
-      return res.status(403).json({message:"Only manager can create projects"});
+    if (req.user.role !== "manager") {
+      return res
+        .status(403)
+        .json({ message: "Only manager can create projects" });
     }
 
-    const {name,description,priority,date}=req.body;
+    const { name, description, priority, date } = req.body;
     //cheack all fields are filled
-    if(!name ||!description ||!priority||!date){
-     return  res.status(400).json({message:"Please fill all forms"});
+    if (!name || !description || !priority || !date) {
+      return res.status(400).json({ message: "Please fill all forms" });
     }
 
-    //create new project  
-    const newProject=new projects({
-      name:name.trim(),
-      description:description.trim(),
-      priority:priority||"Medium",
+    //create new project
+    const newProject = new projects({
+      name: name.trim(),
+      description: description.trim(),
+      priority: priority || "Medium",
       date,
-      createdBy:req.user.id,
-    })
-    await  newProject.save();
+      createdBy: req.user.id,
+    });
+    await newProject.save();
     res.status(200).json(newProject);
-
-  }catch(err){
+  } catch (err) {
     res.status(500).json(err);
   }
-  
 };
 
-exports.getProjectController=async(req,res)=>{
-  try{
-    console.log("Fetching Projects for:",req.user);
-     //ensurring that only mnager  
-    if(req.user.role !=="manager"){
-      return res.status(403).json({message:"only managers can create their project"})
+exports.getProjectController = async (req, res) => {
+  try {
+    console.log("Fetching Projects for:", req.user);
+    //ensurring that only mnager
+    if (req.user.role !== "manager") {
+      return res
+        .status(403)
+        .json({ message: "only managers can create their project" });
     }
     //fetch the projects created by this manager
-    const project=await projects.find({createdBy:req.user.id}).sort({createdBy:-1});
-    res.status(200).json(project)
-
-  }catch(err){
-    res.status(500).json(err)
-  }
-
-}
-
-exports.projectCountController=async(req,res)=>{
-  try{
-    let count;
-    if(req.user.role=="manager"){
-      count=await projects.countDocuments({createdBy:req.user.id});
-      res.status(200).json({count});
-    }else if(req.user.role=="admin"){
-      count=await projects.countDocuments();
-      res.status(200).json({count});
-    }else{
-      res.status(403).json({message:"access denied"});
-    }   
-  }catch(err){
+    const project = await projects
+      .find({ createdBy: req.user.id })
+      .sort({ createdBy: -1 });
+    res.status(200).json(project);
+  } catch (err) {
     res.status(500).json(err);
   }
-}
+};
 
+exports.projectCountController = async (req, res) => {
+  try {
+    let count;
+    if (req.user.role == "manager") {
+      count = await projects.countDocuments({ createdBy: req.user.id });
+      res.status(200).json({ count });
+    } else if (req.user.role == "admin") {
+      count = await projects.countDocuments();
+      res.status(200).json({ count });
+    } else {
+      res.status(403).json({ message: "access denied" });
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+exports.projectInviteController = async (req, res) => {
+  //logic
+  try {
+    console.log("HEADERS:", req.headers["content-type"]);
+    console.log("BODY:", req.body);
+    const { username, email, projectName } = req.body;
+    console.log(username, email, projectName);
+
+    //to check all fields are filled
+    if (!username || !email || !projectName) {
+      return res.status(400).json("please fill all the details");
+    }
+
+    //find the user with email and username
+    const user = await users.findOne({ email, username });
+    console.log(user);
+    console.log("USER ID:", user._id);
+    if (!user) {
+      res.status(404).json("user not Found");
+    }
+
+    //find the project owned by this manager
+    const project = await projects.findOne({
+      name: projectName,
+      createdBy: req.user.id,
+    });
+    console.log(project);
+    console.log("PROJECT ID:",project._id);
+
+    if (!project) {
+      res.status(404).json("project not found");
+    }
+
+    //check that user is invited or not
+    const exists=await projectMember.findOne({
+      projectId:project._id,
+      userId:user._id
+    })
+    console.log(exists);
+
+    if(exists){
+      return res.status(400).json("User Already Invited");
+    }
+    
+
+    //membership
+    const membership=await projectMembers.create({
+      projectId:project._id,
+      userId:user.id,
+      invitedBy:req.user.id,
+    })
+
+    //notification
+    const notification=await notifications({
+      userId:user._id,
+      projectId:project._id,
+      message:`you are invited  to ${project.name}`
+    })
+    res.status(200).json({message:"Invitation sent succesfully",membership,notification})  
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};

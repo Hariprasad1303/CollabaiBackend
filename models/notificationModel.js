@@ -12,10 +12,7 @@ const notificationSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"projects",
     },
-    message:{
-        type:String,
-        required:true
-    },
+    message:String,
     isRead:{
         type:Boolean,
         default:false
@@ -23,7 +20,7 @@ const notificationSchema=new mongoose.Schema({
 },{timestamps:true})
 
 //create model for notification
-const notifications=mongoose.model("nojtifications",notificationSchema);
+const notifications=mongoose.model("notifications",notificationSchema);
 
 //export model
 module.exports=notifications;

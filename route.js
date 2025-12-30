@@ -37,5 +37,8 @@ route.get('/manager/projects',verifyToken,projectController.getProjectController
 //route to get project count
 route.get('/manager/projects/count',verifyToken,projectController.projectCountController)
 
+//route to project invite
+route.post('/manager/invite',verifyToken,verifyManager,projectController.projectInviteController)
+
 //export route
 module.exports=route;
