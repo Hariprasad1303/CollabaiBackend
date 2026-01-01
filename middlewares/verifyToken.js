@@ -22,7 +22,7 @@ const verifyToken = (req, res, next) => {
 
     //verifies any invalid token payload or not
     if (!jwtResponse || !jwtResponse.id) {
-      res.status(400).json({ message: "Invalid token payload" });
+      return res.status(400).json({ message: "Invalid token payload" });
     }
 
     //attach the user with request

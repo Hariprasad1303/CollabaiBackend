@@ -10,6 +10,9 @@ const projectController=require('./controllers/projectController')
 //import project controller
 const notificationController=require('./controllers/notificationController')
 
+//import employee controller
+const employeeController=require('./controllers/employeeController');
+
 //import verifyToken middleware
 const verifyToken=require('./middlewares/verifyToken')
 
@@ -45,6 +48,18 @@ route.post('/manager/invite',verifyToken,verifyManager,projectController.project
 
 //route to notifications(bothe employer and manager can seee the notifications )
 route.get('/notifications',verifyToken,notificationController.getNotificationController);
+
+//route to  mark as red  notifications
+route.put('notifications/:id/read',verifyToken,notificationController.markAsReadController)
+
+//route to accept invite for employee
+route.put('/accept/:inviteId',verifyToken,employeeController.employeeInviteAcceptController);
+
+//route to reject invite for employee
+route.put('/reject/:inviteId',verifyToken,employeeController.employeeInviteRejectController);
+
+//route to get the projects assigned for the employee
+route.get('/employee/my-projects',verifyToken,employeeController.employeeGetProjectsController);
 
 //export route
 module.exports=route;

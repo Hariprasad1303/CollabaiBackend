@@ -16,6 +16,10 @@ const notificationSchema=new mongoose.Schema({
     isRead:{
         type:Boolean,
         default:false
+    },
+    inviteId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"projectMembers",
     }
 },{timestamps:true})
 

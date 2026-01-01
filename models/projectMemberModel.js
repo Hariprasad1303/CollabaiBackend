@@ -20,8 +20,8 @@ const projectMemberSchema=new mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["pending","accepted","invited"],
-        require:true
+        enum:["pending","accept","rejected"],
+        default:"pending"
     },
 },{timestamps:true});
 

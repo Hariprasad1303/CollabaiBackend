@@ -1,10 +1,10 @@
 //import models
 const projects = require("../models/projectModel");
 const users = require("../models/userModel");
-const projectMember = require("../models/projectMemberModel");
 const notifications = require("../models/notificationModel");
 const projectMembers = require("../models/projectMemberModel");
 
+//create project controller
 exports.projectCreateController = async (req, res) => {
   //logic
   try {
@@ -39,6 +39,7 @@ exports.projectCreateController = async (req, res) => {
   }
 };
 
+//get project controller
 exports.getProjectController = async (req, res) => {
   try {
     console.log("Fetching Projects for:", req.user);
@@ -58,6 +59,7 @@ exports.getProjectController = async (req, res) => {
   }
 };
 
+//project count controller
 exports.projectCountController = async (req, res) => {
   try {
     let count;
@@ -75,6 +77,7 @@ exports.projectCountController = async (req, res) => {
   }
 };
 
+//project invite controller
 exports.projectInviteController = async (req, res) => {
   //logic
   try {
@@ -90,51 +93,52 @@ exports.projectInviteController = async (req, res) => {
 
     //find the user with email and username
     const user = await users.findOne({ email, username });
+    if (!user) {
+      return res.status(404).json("user not Found");
+    }
     console.log(user);
     console.log("USER ID:", user._id);
-    if (!user) {
-      res.status(404).json("user not Found");
-    }
 
     //find the project owned by this manager
     const project = await projects.findOne({
       name: projectName,
       createdBy: req.user.id,
     });
-    console.log(project);
-    console.log("PROJECT ID:",project._id);
-
     if (!project) {
-      res.status(404).json("project not found");
+     return  res.status(404).json("project not found");
     }
+    console.log(user);
+    console.log("USER ID:", user._id);
 
     //check that user is invited or not
-    const exists=await projectMember.findOne({
+    const exists=await projectMembers.findOne({
       projectId:project._id,
       userId:user._id
     })
     console.log(exists);
-
     if(exists){
       return res.status(400).json("User Already Invited");
     }
     
 
     //membership
-    const membership=await projectMembers.create({
+    const invite=await projectMembers.create({
       projectId:project._id,
-      userId:user.id,
+      userId:user._id,
       invitedBy:req.user.id,
+      status:"pending"
     })
 
     //notification
     const notification=await notifications.create({
       userId:user._id,
       projectId:project._id,
+      inviteId:invite._id,
       message:`you are invited  to ${project.name}`
     })
-    res.status(200).json({message:"Invitation sent succesfully",membership,notification})  
+    res.status(200).json({message:"Invitation sent succesfully",invite,notification})  
   } catch (err) {
     res.status(500).json(err);
   }
 };
+
