@@ -158,6 +158,7 @@ exports.projectDeleteController=async(req,res)=>{
   }
 }
 
+//project update controller
 exports.projectUpdateController=async(req,res)=>{
   //logic
   try{
