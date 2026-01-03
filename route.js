@@ -13,6 +13,9 @@ const notificationController=require('./controllers/notificationController')
 //import employee controller
 const employeeController=require('./controllers/employeeController');
 
+//import task controller
+const taskControler=require('./controllers/taskController')
+
 //import verifyToken middleware
 const verifyToken=require('./middlewares/verifyToken')
 
@@ -66,6 +69,11 @@ route.put('/reject/:inviteId',verifyToken,employeeController.employeeInviteRejec
 
 //route to get the projects assigned for the employee
 route.get('/employee/my-projects',verifyToken,employeeController.employeeGetProjectsController);
+
+//task creation
+
+//route to create task
+route.post('/manager/create-task',verifyToken,verifyManager,taskControler.createTaskController);
 
 //export route
 module.exports=route;
