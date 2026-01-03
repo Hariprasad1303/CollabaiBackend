@@ -157,3 +157,20 @@ exports.projectDeleteController=async(req,res)=>{
     res.status(500).json(err);
   }
 }
+
+exports.projectUpdateController=async(req,res)=>{
+  //logic
+  try{
+    const {id}=req.params;
+    console.log(id);
+    const {name,description,priority,date}=req.body
+    const updated=await projects.findByIdAndUpdate(id,{name,description,priority,date},{new:true});
+    if(!updated){
+      res.status(404).json("project Not found");
+    }
+    console.log(updated);
+    res.status(200).json(updated);
+  }catch(err){
+    res.status(500).json(err);
+  }
+}

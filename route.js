@@ -40,6 +40,9 @@ route.post('/manager/projects',verifyToken,verifyManager,projectController.proje
 //route to  get project 
 route.get('/manager/projects',verifyToken,projectController.getProjectController);
 
+//route to update project
+route.put('/manager/project/:id',verifyToken,verifyManager,projectController.projectUpdateController);
+
 //route to delete project
 route.delete('/manager/project/:id',verifyToken,verifyManager,projectController.projectDeleteController);
 
