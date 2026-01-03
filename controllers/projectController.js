@@ -142,3 +142,18 @@ exports.projectInviteController = async (req, res) => {
   }
 };
 
+
+//project delete  controller
+exports.projectDeleteController=async(req,res)=>{
+  //logic
+  try{
+    const {id}=req.params;
+    const deleted=await projects.findByIdAndDelete(id);
+    if(!deleted){
+      res.status(404).json("project not found");
+    }
+    res.status(200).json("project deleted succesfully");
+  }catch(err){
+    res.status(500).json(err);
+  }
+}
