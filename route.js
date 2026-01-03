@@ -75,5 +75,8 @@ route.get('/employee/my-projects',verifyToken,employeeController.employeeGetProj
 //route to create task
 route.post('/manager/create-task',verifyToken,verifyManager,taskControler.createTaskController);
 
+//route to fetch tasks
+route.get('/tasks/project/:projectId',verifyToken,taskControler.fetchTaskController)
+
 //export route
 module.exports=route;

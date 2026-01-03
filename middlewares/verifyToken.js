@@ -38,7 +38,7 @@ const verifyToken = (req, res, next) => {
     if (err.name == "TokenExpiredError") {
       return res.status(400).json({ message: "Token Expired" });
     }
-    return res.status(401).json({ message: "Authentictaion Failed" });
+    return res.status(401).json(err);
   }
 };
 module.exports = verifyToken;
