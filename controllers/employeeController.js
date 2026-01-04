@@ -3,6 +3,8 @@ const projectMembers = require("../models/projectMemberModel");
 
 //import projects
 const projects = require("../models/projectModel");
+const tasks = require("../models/tasksModel");
+const { translateAliases } = require("../models/userModel");
 
 //employee invite accept controller
 exports.employeeInviteAcceptController = async (req, res) => {
@@ -70,15 +72,48 @@ exports.employeeInviteRejectController = async (req, res) => {
 //get the project particularly assigned to the employee
 exports.employeeGetProjectsController = async (req, res) => {
   try {
-    const userId=req.user.id;
+    const userId = req.user.id;
     //find the accepted memberships
-    const memberships=await projectMembers.find({userId,status:"accept"}).populate("projectId");
+    const memberships = await projectMembers
+      .find({ userId, status: "accept" })
+      .populate("projectId");
     console.log(memberships);
 
     //extract only projectdata
-    const employeeProjects=await memberships.map(m=>m.projectId);
+    const employeeProjects = await memberships.map((m) => m.projectId);
     res.status(200).json(employeeProjects);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 
+// employee task status update controller
+exports.employeeTastUpdateController = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { status } = req.body;
+
+    //allowed status
+    const allowedStatus = ["todo", "in-progress", "done"];
+
+    //check it is an allowed status or not
+    if (!allowedStatus.includes(status)) {
+     return  res.status(404).json("Invalid Status Value");
+    }
+    //find task
+    const task=await tasks.findById(taskId);
+    //check the task exists or not
+    if(!task){
+      return res.status(404).json("Task not Found");
+    }
+    console.log(task);
+    //check ownership
+    if(task.assignedTo.toString()!==req.user.id){
+      return res.status(403).json("You can only update yopur own tasks")
+    }
+    //saving the task
+    task.status=status;
+    await task.save();
   } catch (err) {
     res.status(500).json(err);
   }

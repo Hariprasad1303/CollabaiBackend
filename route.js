@@ -22,6 +22,9 @@ const verifyToken=require('./middlewares/verifyToken')
 //import verifyManager middleware
 const verifyManager=require('./middlewares/verifyManager');
 
+//import verifyEmployee middleware
+const verifyEmployee = require("./middlewares/verifyEmployee");
+
 //create an instance
 const route=new express.Router();
 
@@ -81,8 +84,11 @@ route.get('/tasks/project/:projectId',verifyToken,taskControler.fetchTaskControl
 //route to update taskk
 route.put('/manager/tasks/:taskId',verifyToken,taskControler.updateTaskController);
 
-//route to delete tasks\
+//route to delete tasks
 route.delete('/manager/delete-task/:taskId',verifyToken,verifyManager,taskControler.deleteTaskController);
+
+//route to update status of tasks assigned to the employees
+route.patch('/employee/tasks/:taskId/status',verifyToken,verifyEmployee,employeeController.employeeTastUpdateController);
 
 //export route
 module.exports=route;
