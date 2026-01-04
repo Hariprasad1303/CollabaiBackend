@@ -81,6 +81,8 @@ route.get('/tasks/project/:projectId',verifyToken,taskControler.fetchTaskControl
 //route to update taskk
 route.put('/manager/tasks/:taskId',verifyToken,taskControler.updateTaskController);
 
+//route to delete tasks\
+route.delete('/manager/delete-task/:taskId',verifyToken,verifyManager,taskControler.deleteTaskController);
 
 //export route
 module.exports=route;
