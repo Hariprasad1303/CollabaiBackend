@@ -40,3 +40,32 @@ exports.fetchTaskController=async(req,res)=>{
         res.status(500).json(err)
     }
 }
+
+//update tasks controller
+exports.updateTaskController=async(req,res)=>{
+ try{
+    const {taskId}=req.params;
+    const {title,priority,dueDate,assignedTo,description}=req.body;
+    const task=await tasks.findById(taskId);
+    //check if there is an existing task or not
+    if(!task){
+        return res.status(404).json("task not found");
+    }
+    //updating
+    task.title=title||task.title
+    task.priority=priority||task.priority
+    task.dueDate=dueDate||task.dueDate
+    task.assignedTo=assignedTo||task.assignedTo
+    task.description=description||task.description
+
+    //saving the task
+   await task.save();
+   res.status(200).json(task); 
+
+ }catch(err){
+    res.status(500).json(err);
+ }   
+}
+
+
+//delete task controler

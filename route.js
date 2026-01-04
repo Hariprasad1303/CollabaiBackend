@@ -78,5 +78,9 @@ route.post('/manager/create-task',verifyToken,verifyManager,taskControler.create
 //route to fetch tasks
 route.get('/tasks/project/:projectId',verifyToken,taskControler.fetchTaskController)
 
+//route to update taskk
+route.put('/manager/tasks/:taskId',verifyToken,taskControler.updateTaskController);
+
+
 //export route
 module.exports=route;
