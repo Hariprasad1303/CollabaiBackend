@@ -73,6 +73,11 @@ route.put('/reject/:inviteId',verifyToken,employeeController.employeeInviteRejec
 //route to get the projects assigned for the employee
 route.get('/employee/my-projects',verifyToken,employeeController.employeeGetProjectsController);
 
+//route to get memebers of each prject which is inviiteioon accepted
+route.get('/manager/project-members/:projectId',verifyToken,verifyManager,projectController.getMembersProjects)
+
+
+
 //task creation
 
 //route to create task

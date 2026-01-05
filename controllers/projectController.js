@@ -105,73 +105,98 @@ exports.projectInviteController = async (req, res) => {
       createdBy: req.user.id,
     });
     if (!project) {
-     return  res.status(404).json("project not found");
+      return res.status(404).json("project not found");
     }
     console.log(user);
     console.log("USER ID:", user._id);
 
     //check that user is invited or not
-    const exists=await projectMembers.findOne({
-      projectId:project._id,
-      userId:user._id
-    })
+    const exists = await projectMembers.findOne({
+      projectId: project._id,
+      userId: user._id,
+    });
     console.log(exists);
-    if(exists){
+    if (exists) {
       return res.status(400).json("User Already Invited");
     }
-    
 
     //membership
-    const invite=await projectMembers.create({
-      projectId:project._id,
-      userId:user._id,
-      invitedBy:req.user.id,
-      status:"pending"
-    })
+    const invite = await projectMembers.create({
+      projectId: project._id,
+      userId: user._id,
+      invitedBy: req.user.id,
+      status: "pending",
+    });
 
     //notification
-    const notification=await notifications.create({
-      userId:user._id,
-      projectId:project._id,
-      inviteId:invite._id,
-      message:`you are invited  to ${project.name}`
-    })
-    res.status(200).json({message:"Invitation sent succesfully",invite,notification})  
+    const notification = await notifications.create({
+      userId: user._id,
+      projectId: project._id,
+      inviteId: invite._id,
+      message: `you are invited  to ${project.name}`,
+    });
+    res
+      .status(200)
+      .json({ message: "Invitation sent succesfully", invite, notification });
   } catch (err) {
     res.status(500).json(err);
   }
 };
 
-
 //project delete  controller
-exports.projectDeleteController=async(req,res)=>{
+exports.projectDeleteController = async (req, res) => {
   //logic
-  try{
-    const {id}=req.params;
-    const deleted=await projects.findByIdAndDelete(id);
-    if(!deleted){
+  try {
+    const { id } = req.params;
+    const deleted = await projects.findByIdAndDelete(id);
+    if (!deleted) {
       res.status(404).json("project not found");
     }
     res.status(200).json("project deleted succesfully");
-  }catch(err){
+  } catch (err) {
     res.status(500).json(err);
   }
-}
+};
 
 //project update controller
-exports.projectUpdateController=async(req,res)=>{
+exports.projectUpdateController = async (req, res) => {
   //logic
-  try{
-    const {id}=req.params;
+  try {
+    const { id } = req.params;
     console.log(id);
-    const {name,description,priority,date}=req.body
-    const updated=await projects.findByIdAndUpdate(id,{name,description,priority,date},{new:true});
-    if(!updated){
+    const { name, description, priority, date } = req.body;
+    const updated = await projects.findByIdAndUpdate(
+      id,
+      { name, description, priority, date },
+      { new: true }
+    );
+    if (!updated) {
       res.status(404).json("project Not found");
     }
     console.log(updated);
     res.status(200).json(updated);
-  }catch(err){
+  } catch (err) {
     res.status(500).json(err);
   }
-}
+};
+
+//fetch manager Projects
+exports.getMembersProjects =async (req, res) => {
+  //logic
+  try {
+    const { projectId } = req.params;
+    console.log(projectId);
+    //accepted members
+    const acceptedMembers =await projectMembers.find({ projectId, status: "accept" });
+    console.log(acceptedMembers);
+    //check there is accepted memebers or not  
+    if(acceptedMembers.length===0){
+      return res.status(404).json("members not found");
+    }  
+    console.log("Accepted members are",acceptedMembers);
+
+    res.status(200).json(acceptedMembers);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
