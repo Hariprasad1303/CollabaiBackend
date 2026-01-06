@@ -187,7 +187,7 @@ exports.getMembersProjects =async (req, res) => {
     const { projectId } = req.params;
     console.log(projectId);
     //accepted members
-    const acceptedMembers =await projectMembers.find({ projectId, status: "accept" });
+    const acceptedMembers =await projectMembers.find({ projectId, status: "accept" }).populate("userId","name email");
     console.log(acceptedMembers);
     //check there is accepted memebers or not  
     if(acceptedMembers.length===0){
