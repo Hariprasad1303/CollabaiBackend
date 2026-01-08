@@ -95,6 +95,9 @@ route.put('/manager/tasks/:taskId',verifyToken,taskControler.updateTaskControlle
 //route to delete tasks
 route.delete('/manager/delete-task/:taskId',verifyToken,verifyManager,taskControler.deleteTaskController);
 
+//route to get task count
+route.get('/manager/tasks/count',verifyToken,taskControler.getTaskCountController)
+
 //route to update status of tasks assigned to the employees
 route.patch('/employee/tasks/:taskId/status',verifyToken,verifyEmployee,employeeController.employeeTastUpdateController);
 

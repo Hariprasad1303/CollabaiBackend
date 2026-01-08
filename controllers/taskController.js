@@ -116,3 +116,14 @@ exports.deleteTaskController = async (req, res) => {
     res.status(500).json(err);
   }
 };
+
+//controller to get total task count created by manager
+exports.getTaskCountController=async(req,res)=>{
+  try{
+    const count=await tasks.countDocuments({createdBy:req.user.id});
+    console.log(count);
+    res.status(200).json({count})
+  }catch(err){
+    res.status(500).json(err.message);
+  }
+}
