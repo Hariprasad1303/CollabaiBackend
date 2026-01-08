@@ -121,8 +121,11 @@ exports.deleteTaskController = async (req, res) => {
 exports.getTaskCountController=async(req,res)=>{
   try{
     const count=await tasks.countDocuments({createdBy:req.user.id});
-    console.log(count);
-    res.status(200).json({count})
+    const todos=await tasks.countDocuments({createdBy:req.user.id,status:"todo"});
+    const inProgress=await tasks.countDocuments({createdBy:req.user.id,status:"in-progress"});
+    const completed=await tasks.countDocuments({createdBy:req.user.id,status:"done"});
+    console.log(count,todos,inProgress,completed);
+    res.status(200).json({count,todos,inProgress,completed});
   }catch(err){
     res.status(500).json(err.message);
   }
