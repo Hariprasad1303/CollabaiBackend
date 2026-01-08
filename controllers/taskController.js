@@ -50,8 +50,8 @@ exports.createTaskController = async (req, res) => {
   }
 };
 
-// fetch tasks controller
-exports.fetchTaskController = async (req, res) => {
+// fetch tasks controller for each project
+exports.fetchManagerTaskController = async (req, res) => {
   //logic
   try {
     const { projectId } = req.params;
@@ -63,6 +63,19 @@ exports.fetchTaskController = async (req, res) => {
   }
 };
 
+//fetch alltasks controller irrespective of project
+exports.getAllTasksController=async(req,res)=>{
+  //logic
+  try{
+    const managerId=req.user.id;
+    console.log(managerId);
+    const managerTasks=await tasks.find({createdBy:managerId}).populate("assignedTo","username email").populate("projectId","name date");
+    console.log(managerTasks);
+    res.status(200).json(managerTasks);
+  }catch(err){
+    res.status(500).json(err.message)
+  }
+}
 //update tasks controller
 exports.updateTaskController = async (req, res) => {
   try {

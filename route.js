@@ -83,8 +83,11 @@ route.get('/manager/project-members/:projectId',verifyToken,verifyManager,projec
 //route to create task
 route.post('/manager/create-task',verifyToken,verifyManager,taskControler.createTaskController);
 
-//route to fetch tasks
-route.get('/tasks/project/:projectId',verifyToken,taskControler.fetchTaskController)
+//route to fetch tasks created by manager for each project
+route.get('/manager/tasks/project/:projectId',verifyToken,taskControler.fetchManagerTaskController)
+
+//route to get all tasks created by that manager irrespective of project
+route.get('/manager/tasks',verifyToken,verifyManager,taskControler.getAllTasksController)
 
 //route to update taskk
 route.put('/manager/tasks/:taskId',verifyToken,taskControler.updateTaskController);
