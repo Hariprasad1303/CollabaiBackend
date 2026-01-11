@@ -162,17 +162,49 @@ exports.adminLoginController=async(req,res)=>{
   try{
     //destructuring the request
     const {email,password}=req.body;
+    console.log(req.body);
     console.log(email,password);
 
     //find the admin
-    const admin=await users.find({email,role:"admin"});
+    const admin=await users.findOne({email,role:"admin"});
     if(!admin){
       return res.status(404).json("admin not found");
     }
-    console.log(admin)
+    console.log(admin);
+    console.log(admin.password,password);
 
+    //password verification
+    const isMatch=await  bcrypt.compare(password,admin.password);
+    if(!isMatch){
+      return res.status(401).json("Invalid password")
+    }
+    console.log(isMatch)
 
-    res.status(200).json(admin);
+    //generate otp
+    const otp=Math.floor(10000+Math.random()*90000).toString();
+    console.log(otp);
+
+    admin.otp=otp;
+    admin.otpExpiry=Date.now()+5*60*100;
+    await admin.save();
+    console.log(process.env.ADMIN_EMAIL);
+    console.log(process.env.ADMIN_PASSWORD);
+
+    //send otp to gmail
+    const transporter=nodemailer.createTransport({
+      service:"gmail",
+      auth:{
+        user:process.env.ADMIN_EMAIL,
+        pass:process.env.ADMIN_PASSWORD
+      }
+    })
+
+    await transporter.sendMail({
+      to:admin.email,
+      subject:"Collab AI Login OTP",
+      html:`<h2>Your OTP is ${otp}</h2><p>Valid for 5 minutes</p> `
+    })
+    res.status(200).json("otp send to admin email");
   }catch(err){
     res.status(500).json(err.message)
   }
