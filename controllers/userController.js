@@ -1,12 +1,21 @@
-//import user model
+//import bcrypt
+const bcrypt=require("bcrypt");
+
+//import nodemailer
+const nodemailer=require("nodemailer");
+
+//import projectMembers model
 const projectMembers = require("../models/projectMemberModel");
+
+//import project model
 const projects = require("../models/projectModel");
 
-//import project modal
+//import user modal
 const users = require("../models/userModel");
 
 //import jwt
 const jwt = require("jsonwebtoken");
+
 
 //sign up controller both manager and employee
 exports.signupController = async (req, res) => {
@@ -72,6 +81,8 @@ exports.getUserDetailsController = async (req, res) => {
     res.status(500).json(err);
   }
 };
+
+//update profile controller
 exports.updateController = async (req, res) => {
   //logic
   try {
@@ -89,6 +100,7 @@ exports.updateController = async (req, res) => {
   }
 };
 
+//get team members controllers manager
 exports.getManagerTeamController = async (req, res) => {
   try {
     //the user(manager) iniated the request
@@ -143,3 +155,26 @@ exports.getManagerTeamController = async (req, res) => {
     res.status(500).json(err.message);
   }
 };
+
+
+//admin login controller
+exports.adminLoginController=async(req,res)=>{
+  try{
+    //destructuring the request
+    const {email,password}=req.body;
+    console.log(email,password);
+
+    //find the admin
+    const admin=await users.find({email,role:"admin"});
+    if(!admin){
+      return res.status(404).json("admin not found");
+    }
+    console.log(admin)
+
+
+    res.status(200).json(admin);
+  }catch(err){
+    res.status(500).json(err.message)
+  }
+}
+

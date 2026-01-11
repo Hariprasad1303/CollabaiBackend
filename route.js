@@ -110,5 +110,11 @@ route.get('/employee/team',verifyToken,verifyEmployee,employeeController.getMyTe
 //route to get manager team
 route.get('/manager/team',verifyToken,verifyManager,userController.getManagerTeamController);
 
+//admin
+
+//route for admin login
+route.post('/admin/login',userController.adminLoginController);
+
+
 //export route
 module.exports=route;
