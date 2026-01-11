@@ -19,7 +19,9 @@ const userSchema=new mongoose.Schema({
        type:String,
        enum:["employee","manager","admin"],
        default:"employee" 
-    }
+    },
+    otp:String,
+    otpExpiry:Date
 },{timestamps:true});
 
 //create model using schema

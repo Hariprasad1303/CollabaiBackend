@@ -16,7 +16,7 @@ exports.signupController = async (req, res) => {
   try {
     const existingUser = await users.findOne({ email: email });
     if (existingUser) {
-      res.status(400).josn("Already existing User");
+      res.status(400).json("Already existing User");
     } else {
       const newUser = new users({
         username,
@@ -29,7 +29,7 @@ exports.signupController = async (req, res) => {
       res.status(200).json(newUser);
     }
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json(err.message);
   }
 };
 
