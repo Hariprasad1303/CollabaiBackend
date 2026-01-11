@@ -104,5 +104,8 @@ route.get('/employee/tasks/count',verifyToken,employeeController.employeeTaskskC
 //route to update status of tasks assigned to the employees
 route.patch('/employee/tasks/:taskId/status',verifyToken,verifyEmployee,employeeController.employeeTastUpdateController);
 
+//route to get employee team
+route.get('/employee/team',verifyToken,verifyEmployee,employeeController.getMyTeamMembersController)
+
 //export route
 module.exports=route;

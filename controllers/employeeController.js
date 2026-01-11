@@ -124,26 +124,89 @@ exports.employeeTaskskCountController = async (req, res) => {
   try {
     const employeeId = req.user.id;
     //find the no of tasks the employee is  assigned
-    const count = await tasks.countDocuments({assignedTo: employeeId});
+    const count = await tasks.countDocuments({ assignedTo: employeeId });
     //find the no of task of employee is in todo status
     const todos = await tasks.countDocuments({
-      assignedTo:employeeId,
+      assignedTo: employeeId,
       status: "todo",
     });
     //find the no of task of employee is in in-progress status
     const inProgress = await tasks.countDocuments({
-      assignedTo:employeeId,
+      assignedTo: employeeId,
       status: "in-progress",
     });
     //find the no of task of employee is in completed status
     const completed = await tasks.countDocuments({
-      assignedTo:employeeId,
+      assignedTo: employeeId,
       status: "done",
     });
     //find the no of project the employee is assigned till now
-    const projectCount=await projectMembers.countDocuments({userId:employeeId})
-    console.log(count,todos,inProgress,completed,projectCount);
-    res.status(200).json({ count,todos,inProgress,completed,projectCount});
+    const projectCount = await projectMembers.countDocuments({
+      userId: employeeId,
+    });
+    console.log(count, todos, inProgress, completed, projectCount);
+    res.status(200).json({ count, todos, inProgress, completed, projectCount });
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+};
+
+exports.getMyTeamMembersController = async (req, res) => {
+  try {
+    //the one who iniating the request
+    const employeeId = req.user.id;
+
+    //find the projects employee working in
+    const employeeProjects = await projectMembers
+      .find({
+        userId: employeeId,
+        status: "accept",
+      })
+      .select("projectId");
+    console.log(employeeProjects);
+
+    //extracting the projectIds
+    const projectIds = employeeProjects.map((m) => m.projectId);
+    console.log(projectIds);
+
+    //find the team members
+    const teamMembers = await projectMembers
+      .find({
+        projectId: { $in: projectIds },
+        status: "accept",
+      })
+      .populate("userId", "username email role")
+      .populate("projectId", "name date");
+    console.log(teamMembers);
+
+    //remove duplicates beacuse a person xcan work in multiple projects
+    const unique = new Map();
+    teamMembers.forEach((m) => {
+      const userId = m.userId._id.toString();
+      console.log(userId);
+      if (!unique.has(userId)) {
+        unique.set(userId, {
+          _id: m.userId._id,
+          username: m.userId.username,
+          email: m.userId.email,
+          role: m.userId.role,
+          projects: [],
+        });
+      }
+      unique.get(userId).projects.push({
+        name: m.projectId.name,
+        dueDate: m.projectId.date,
+      });
+    });
+    //team mebers of the employee
+    const members = [...unique.values()];
+    console.log(members);
+
+    //total members
+    const totalMembers = members.length;
+    console.log(totalMembers);
+
+    res.status(200).json({ members, totalMembers });
   } catch (err) {
     res.status(500).json(err.message);
   }
