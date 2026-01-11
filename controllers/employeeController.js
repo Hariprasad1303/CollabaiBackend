@@ -174,6 +174,7 @@ exports.getMyTeamMembersController = async (req, res) => {
       .find({
         projectId: { $in: projectIds },
         status: "accept",
+        userId:{$ne:employeeId}
       })
       .populate("userId", "username email role")
       .populate("projectId", "name date");

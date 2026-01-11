@@ -128,7 +128,7 @@ exports.getManagerTeamController = async (req, res) => {
       }
       unique.get(userId).projects.push({
         name: m.projectId.name,
-        duedate: m.projectId.date
+        dueDate: m.projectId.date
       });
     });
 
