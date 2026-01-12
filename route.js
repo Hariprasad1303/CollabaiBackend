@@ -115,6 +115,9 @@ route.get('/manager/team',verifyToken,verifyManager,userController.getManagerTea
 //route for admin login
 route.post('/admin/login',userController.adminLoginController);
 
+//route to verifyAdmin otp
+route.post('/admin/verify-otp',userController.adminOtpVerifyController);
+
 
 //export route
 module.exports=route;

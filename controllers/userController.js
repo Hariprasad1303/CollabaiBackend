@@ -210,3 +210,49 @@ exports.adminLoginController=async(req,res)=>{
   }
 }
 
+
+//admin verify Otp controller
+exports.adminOtpVerifyController=async(req,res)=>{
+  try{
+    const {email,otp}=req.body;
+    console.log(email,otp);
+
+    //find the admin
+    const admin =await users.findOne({email,role:"admin"});
+    if(!admin){
+      return res.status(404).json("admin not found")
+    }
+    console.log(admin);
+
+    //verifying admin otp
+    if(admin.otp!=otp){
+      return res.status(400).json("Invalid OTP");
+    }
+
+    //check that otp is expired or not
+    if(admin.otpExpiry<Date.now()){
+      return res.status(400).json("OTP Expired");
+    }
+
+
+    //clear otp
+    admin.otp=null;
+    admin.otpExpiry=null;
+    await admin.save();
+
+    //create jwt
+    const token=jwt.sign({id:admin._id,role:"admin"},process.env.secretKey);
+    console.log(token)
+
+
+    res.status(200).json({token,admin:{
+      id:admin._id,
+      username:admin.username,
+      email:admin.email,
+      password:admin.password
+    }});
+  }catch(err){
+    res.status(500).json(err.message);
+  }
+}
+
