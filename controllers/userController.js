@@ -185,7 +185,7 @@ exports.adminLoginController=async(req,res)=>{
     console.log(otp);
 
     admin.otp=otp;
-    admin.otpExpiry=Date.now()+5*60*100;
+    admin.otpExpiry=Date.now()+5*60*1000;
     await admin.save();
     console.log(process.env.ADMIN_EMAIL);
     console.log(process.env.ADMIN_PASSWORD);
@@ -230,7 +230,7 @@ exports.adminOtpVerifyController=async(req,res)=>{
     }
 
     //check that otp is expired or not
-    if(admin.otpExpiry<Date.now()){
+    if( admin.otpExpiry< Date.now()){
       return res.status(400).json("OTP Expired");
     }
 
