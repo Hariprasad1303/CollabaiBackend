@@ -294,11 +294,7 @@ exports.getManagerProjectDetailsController=async(req,res)=>{
     }
 
     res.status(200).json({
-      project:{
-        id:project._id,
-        name:project.name,
-        dueDate:project.date
-      },members,Tasks,stats
+      project,members,Tasks,stats
     });
   }catch(err){
     res.status(500).json(err.message);
