@@ -76,6 +76,8 @@ route.get('/employee/my-projects',verifyToken,employeeController.employeeGetProj
 //route to get memebers of each prject which is inviiteioon accepted
 route.get('/manager/project-members/:projectId',verifyToken,verifyManager,projectController.getMembersProjects)
 
+//route to get Manager Project Details
+route.get('/manager/project-details/:projectId',verifyToken,verifyManager,userController.getManagerProjectDetailsController);
 
 
 //task creation

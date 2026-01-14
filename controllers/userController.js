@@ -13,6 +13,9 @@ const projects = require("../models/projectModel");
 //import user modal
 const users = require("../models/userModel");
 
+//import tasks model
+const tasks=require("../models/tasksModel")
+
 //import jwt
 const jwt = require("jsonwebtoken");
 
@@ -256,3 +259,48 @@ exports.adminOtpVerifyController=async(req,res)=>{
   }
 }
 
+
+//get manager each project details
+exports.getManagerProjectDetailsController=async(req,res)=>{
+  try{
+    //the user who requesting fopor details
+    const managerId=req.user.id;
+
+    //which project the manager requesting details for
+    const projectId=req.params.projectId;
+
+    //verify Project
+    const project=await projects.find({
+      _id:projectId,
+      createdBy:managerId
+    })
+    if(!project){
+      return res.status(403).json("Not authorised")
+    }
+
+    //get members in this project
+    const members=await projectMembers.find({projectId,status:"accept"}).populate("userId","username email role");
+
+    //get all the tasks in this project
+    const Tasks=await tasks.find({projectId}).populate("assignedTo","username email");
+   
+    //project stats
+    const stats={
+      totalMembers:members.length,
+      totaltasks:Tasks.length,
+      todo:Tasks.filter(t=>t.status==="todo").length,
+      inProgress:Tasks.filter(t=>t.status==="in-progress").length,
+      completed:Tasks.filter(t=>t.status==="completed").length
+    }
+
+    res.status(200).json({
+      project:{
+        id:project._id,
+        name:project.name,
+        dueDate:project.date
+      },members,Tasks,stats
+    });
+  }catch(err){
+    res.status(500).json(err.message);
+  }
+}
