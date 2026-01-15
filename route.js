@@ -109,6 +109,9 @@ route.patch('/employee/tasks/:taskId/status',verifyToken,verifyEmployee,employee
 //route to get employee team
 route.get('/employee/team',verifyToken,verifyEmployee,employeeController.getMyTeamMembersController)
 
+//route to get employee project Tasks
+route.get('/employee/projects/:projectId/employee-tasks',verifyToken,verifyEmployee,employeeController.getEmployeeProjectTaskController)
+
 //route to get manager team
 route.get('/manager/team',verifyToken,verifyManager,userController.getManagerTeamController);
 

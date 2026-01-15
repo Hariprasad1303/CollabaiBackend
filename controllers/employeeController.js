@@ -174,7 +174,7 @@ exports.getMyTeamMembersController = async (req, res) => {
       .find({
         projectId: { $in: projectIds },
         status: "accept",
-        userId:{$ne:employeeId}
+        userId: { $ne: employeeId },
       })
       .populate("userId", "username email role")
       .populate("projectId", "name date");
@@ -208,6 +208,29 @@ exports.getMyTeamMembersController = async (req, res) => {
     console.log(totalMembers);
 
     res.status(200).json({ members, totalMembers });
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+};
+
+//get employee project tasks
+exports.getEmployeeProjectTaskController = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const employeeId = req.user.id;
+    const Tasks = await tasks.find({ projectId, assignedTo: employeeId });
+    const project = await projects.find({ _id: projectId });
+    const members = await projectMembers
+      .find({ projectId, status: "accept" })
+      .populate("userId", "username email role");
+    const employeeProjectStats = {
+      totalTasks: Tasks.length,
+      totalMembers: members.length,
+      todo: Tasks.filter((t) => t.status === "todo").length,
+      inProgress: Tasks.filter((t) => t.status === "in-progress").length,
+      completed: Tasks.filter((t) => t.status === "completed").length,
+    };
+    res.status(200).json({ Tasks, project, members,employeeProjectStats});
   } catch (err) {
     res.status(500).json(err.message);
   }
